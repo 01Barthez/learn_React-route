@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, NavLink, useParams, Outlet, useLoaderData } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, NavLink, useParams, Outlet, useLoaderData, useNavigation } from "react-router-dom"
 
 const NavigationLink = () => {
   return (
@@ -47,6 +47,7 @@ const SingleBlog = () => {
 }
 
 interface dataProduct {
+  id: number,
   title: string, 
   image:string, 
   price: number, 
@@ -61,11 +62,11 @@ const Products = () => {
       {
         productData.map((ele) => (
           <ul>
-            <li>image: {ele.image}</li>
-            <li>Title: {ele.title} </li>
-            <li>Price: {ele.price} </li>
-            <li>Description: {ele.description} </li>
-            <li>Categorie: {ele.categorie} </li>
+            <li key={ele.id}>image: {ele.image}</li>
+            <li key={ele.id}>Title: {ele.title} </li>
+            <li key={ele.id}>Price: {ele.price} </li>
+            <li key={ele.id}>Description: {ele.description} </li>
+            <li key={ele.id}>Categorie: {ele.categorie} </li>
           </ul>
         ))
       };
@@ -201,6 +202,8 @@ const Router = createBrowserRouter([
 ])
   
 function WatchRoutes() {
+  const {state} = useNavigation();
+
   return (
     <>
       <header>
@@ -208,8 +211,8 @@ function WatchRoutes() {
       </header>
 
       <main>
+        {state === "loading" && <p>En cours de traitement...</p>}
         {/* rendu */}
-        <h2></h2>
         <Outlet/>
       </main>
     </>
