@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, NavLink, useParams, Outlet } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, NavLink, useParams, Outlet, useLoaderData } from "react-router-dom"
 
 const NavigationLink = () => {
   return (
@@ -18,7 +18,11 @@ const NavigationLink = () => {
       <li>
         <NavLink to="/contact">Contact</NavLink>
       </li>
-  </ul>
+
+      <li>
+        <NavLink to="/products">Products</NavLink>
+      </li>
+    </ul>
   )
 }
 
@@ -42,53 +46,109 @@ const SingleBlog = () => {
   )
 }
 
+interface dataProduct {
+  title: string, 
+  image:string, 
+  price: number, 
+  description:string, 
+  categorie: string
+};
+
+const Products = () => {
+  const productData: dataProduct[] = useLoaderData();
+  return(
+    <>
+      {
+        productData.map((ele) => (
+          <ul>
+            <li>image: {ele.image}</li>
+            <li>Title: {ele.title} </li>
+            <li>Price: {ele.price} </li>
+            <li>Description: {ele.description} </li>
+            <li>Categorie: {ele.categorie} </li>
+          </ul>
+        ))
+      };
+    </>
+  )
+}
+
 const Router = createBrowserRouter([
   {
     path: "/",
-    element: <>
-      <WatchRoutes/>
-    </>,
-    errorElement: <PageError/>,
+    element: (
+      <>
+        <WatchRoutes/>
+      </>
+    ),
+    errorElement: (
+      <PageError/>
+    ),
     children: [
       {
         path: 'Home',
-        element: <>
-          <h2>Home Page</h2>
-        </>,
+        element: (
+          <>
+            <h2>Home Page</h2>
+          </>
+        )
       },
       {
         path: 'Status',
-        element: <>
-          <h2>Status Page</h2>
-        </>,
+        element:(
+          <>
+            <h2>Status Page</h2>
+          </>
+        )
       },
       {
         path: 'blog/',
-        element: <>
+        element: (
+          <>
             <Outlet/>
-        </>,
+          </>
+        ),
         children: [
           {
             path: '',
-            element: <h2>Blog Page</h2>
+            element: (
+              <h2>Blog Page</h2>
+            ),
           },
+            
           {
             path: ':id',
-            element: <>
-              <SingleBlog />
-            </> 
+            element: (
+              <>
+                <SingleBlog />
+              </> 
+            ) 
           }
         ]
       },
 
       {
+        path: 'products',
+        loader: () => (
+          fetch('https://fakestoreapi.com/products?limit=3')
+        ),
+        element: (<>
+            <h1>Produits</h1>
+            <Products/>
+        </>)
+      },
+
+      {
         path: 'contact',
-        element: <>
-          <h2>Contact Page</h2>
-        </>,
+        element: (
+          <>
+            <h2>Contact Page</h2>
+          </>
+        )
       },
     ]
   },
+  
 
     // {
     //   path: '*',
