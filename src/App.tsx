@@ -1,12 +1,4 @@
-import { createBrowserRouter, RouterProvider, NavLink, useParams } from "react-router-dom"
-
-const SingleBlog = () => {
-  const { id } = useParams();
-  
-  return (
-    <h2>Blog N: {id} </h2>
-  )
-}
+import { createBrowserRouter, RouterProvider, NavLink, useParams, Outlet } from "react-router-dom"
 
 const NavigationLink = () => {
   return (
@@ -16,7 +8,7 @@ const NavigationLink = () => {
       </li>
 
       <li>
-        <NavLink to="/blog">Blogs</NavLink>
+        <NavLink to="/blog">Blogs:id</NavLink>
       </li>
 
       <li>
@@ -30,48 +22,73 @@ const NavigationLink = () => {
   )
 }
 
-function App() {
-  const Router = createBrowserRouter([
-    {
-      path: "/",
-      element: <>
-        <h2>Home Page</h2>
-        <NavigationLink/>
-      </>,
-      children: [
-        {
-          path: 'blog',
-          element: <>
-            <h2>Blog Page</h2>
-            <NavigationLink/>
-          </>,
-        },
+const PageError = () => {
+  return (
+    <>
+      <h1>Page Error</h1>  
 
-        {
-          path: 'contact',
-          element: <>
-            <h2>Contact Page</h2>
-            <NavigationLink/>
-          </>,
-        },
+      <p>
+        {/* {error?.error?.toString() ?? error?.toString()} */}
+      </p>
+    </>
+  )
+}
 
-        {
-          path: 'Status',
-          element: <>
-            <h2>Status Page</h2>
-            <NavigationLink/>
-          </>,
-        }
-      ]
-    },
-    {
-      path: '*',
-      element: <>
-        <h1>404 not found</h1>
-        <NavigationLink/>
-      </>
-    },
+const SingleBlog = () => {
+  const { id } = useParams();
+  
+  return (
+    <h2>Blog N: {id} </h2>
+  )
+}
 
+const Router = createBrowserRouter([
+  {
+    path: "/",
+    element: <>
+      <WatchRoutes/>
+    </>,
+    errorElement: <PageError/>,
+    children: [
+      {
+        path: 'Home',
+        element: <>
+          <h2>Home Page</h2>
+        </>,
+      },
+      {
+        path: 'Status',
+        element: <>
+          <h2>Status Page</h2>
+        </>,
+      },
+      {
+        path: 'blog/',
+        element: <>
+            <Outlet/>
+        </>,
+        children: [
+          {
+            path: '',
+            element: <h2>Blog Page</h2>
+          },
+          {
+            path: ':id',
+            element: <>
+              <SingleBlog />
+            </> 
+          }
+        ]
+      },
+
+      {
+        path: 'contact',
+        element: <>
+          <h2>Contact Page</h2>
+        </>,
+      },
+    ]
+  },
 
     // {
     //   path: '*',
@@ -121,10 +138,29 @@ function App() {
     //     <NavigationLink/>
     //   </> 
     // },
-  ])
-
+])
+  
+function WatchRoutes() {
   return (
-    <RouterProvider router={Router}/>
+    <>
+      <header>
+        <NavigationLink/>
+      </header>
+
+      <main>
+        {/* rendu */}
+        <h2></h2>
+        <Outlet/>
+      </main>
+    </>
+  )
+}
+
+function App() {
+  return (
+    <>
+      <RouterProvider router={Router}/>
+    </>
   )
 }
 
